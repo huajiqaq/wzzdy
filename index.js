@@ -1,6 +1,6 @@
 window.onload = function () {
     document.getElementsByTagName("mdui-card")[0].style.visibility = "unset"
-    document.querySelector("body > mdui-layout > mdui-top-app-bar > mdui-top-app-bar-title").innerText = "王者自定义房间 4.1"
+    document.querySelector("body > mdui-layout > mdui-top-app-bar > mdui-top-app-bar-title").innerText = "王者自定义房间 4.2"
 }
 
 const tip1 = "没有配置 请先点击管理配置新建配置"
@@ -357,15 +357,15 @@ function 生成链接(func) {
 
     var heros = edittab[1].value.replace(/\s+/g, "");
 
-    if (oheros) {
-        heros = oheros
-    }
-
     if (localStorage.getItem("custom_heros")) {
         var herojson = JSON.parse(localStorage.getItem("custom_heros"))
         if (herojson[edittab[1].value]) {
             heros = herojson[edittab[1].value]
         }
+    }
+
+    if (oheros) {
+        heros = oheros
     }
 
     let banheros = []
@@ -388,10 +388,10 @@ function 生成链接(func) {
             let value = mydatajson[1][item]
             if (banheros_str.includes(value)) {
                 allbanheros.push(item)
-                heros = allbanheros.join(" ")
             }
         }
 
+        heros = allbanheros.join(" ")
         banheros = banheros.map(item => item.split('|')[0]);
     } else {
         for (item in mydatajson[1]) {
@@ -1250,7 +1250,7 @@ var heroButton = document.getElementsByClassName("herobutton")
 
 function 获取选择英雄名() {
     var editvalue = document.querySelectorAll(".myedit")[1].value
-    if (editvalue) {
+    if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
         var heros_json = JSON.parse(localStorage.getItem("custom_heros"))
         if (heros_json[editvalue].includes("suiji")) {
             return heros_json[editvalue]
@@ -1534,7 +1534,7 @@ heroButton[3].onclick = function () {
 heroButton[4].onclick = function () {
     if (localStorage.getItem("custom_heros")) {
         var editvalue = document.querySelectorAll(".myedit")[1].value
-        if (editvalue) {
+        if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
             mdui.confirm({
                 headline: "提示",
                 description: "是否删除该配置",
@@ -1580,7 +1580,7 @@ heroButton[4].onclick = function () {
 heroButton[5].onclick = function () {
     if (localStorage.getItem("custom_heros")) {
         var editvalue = document.querySelectorAll(".myedit")[1].value
-        if (editvalue) {
+        if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
 
             var heros_json = JSON.parse(localStorage.getItem("custom_heros"))
 
@@ -1655,7 +1655,7 @@ heroButton[7].onclick = function () {
 heroButton[8].onclick = function () {
     if (localStorage.getItem("custom_heros")) {
         var editvalue = document.querySelectorAll(".myedit")[1].value
-        if (editvalue) {
+        if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
 
             var heros_json = JSON.parse(localStorage.getItem("custom_heros"))
             if (heros_json[editvalue].includes("suiji")) {
@@ -2162,7 +2162,13 @@ function shuffleArray3(Arr1, Arr2, randomtab, postab) {
 }
 
 function shuffleArray4(Arr, randomtab, postab) {
-    const combinedArr = [...Arr];
+    if (Array.isArray(Arr) == false) {
+        let random = getRandomElementFromArray(randomtab)
+        console.log("随机生成前:", Arr);
+        console.log("随机生成后的:", randomtab);
+        return random
+    }
+    const combinedArr = [...Arr]
     // 打乱合并后的数组
     for (let index = 0; index < postab.length; index++) {
         const pos = postab[index] - 1
@@ -3136,7 +3142,7 @@ customButton[1].onclick = function () {
                 yxtype: document.getElementsByClassName("setmode")[0].value,
                 bxtype: document.getElementsByClassName("setmode")[1].value,
                 sjtype: document.getElementsByClassName("setmode")[2].value,
-                adjson: [edittt[0].value, edittt[1].value, edittt[2].data, edittt[3].data]
+                adjson: ["", "", "", ""]
             }
             console.log(custom_json)
             localStorage.setItem("custom_cof", JSON.stringify(custom_json))
@@ -3195,7 +3201,7 @@ customButton[3].onclick = function () {
 customButton[4].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (editvalue) {
+        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
             mdui.confirm({
                 headline: "提示",
                 description: "是否删除该配置",
@@ -3237,7 +3243,7 @@ customButton[4].onclick = function () {
 customButton[5].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (editvalue) {
+        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
             mdui.prompt({
                 headline: "提示",
                 description: tip4,
@@ -3286,7 +3292,7 @@ customButton[5].onclick = function () {
 customButton[6].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (editvalue) {
+        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
             document.getElementsByClassName("suijitest")[0].open = true
         } else {
             mdui_snackbar({
@@ -3307,7 +3313,7 @@ customButton[6].onclick = function () {
 customButton[7].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (editvalue) {
+        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
             mdui.confirm({
                 headline: "提示",
                 description: "是否保存该配置",
@@ -4098,7 +4104,7 @@ function createcustom_tab(ele) {
             edittt = document.getElementsByClassName("suijitest")[0].getElementsByTagName("mdui-text-field")
             edittt[peimode].value = "点击编辑配置 共有" + Object.keys(JSON.parse(adstr)).length + "个配置"
         } catch {
-            edittt[peimode].value = "点击编辑配置 共有" + Object.keys(JSON.parse(adstr)).length + "个配置"
+            edittt[peimode].value = "点击编辑配置 共有0个配置"
         }
 
     })
