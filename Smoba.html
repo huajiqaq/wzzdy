@@ -1,0 +1,718 @@
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <link crossorigin="" rel="shortcut icon" type="image/x-icon" href="./logo-200x200.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then((registration) => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch((error) => {
+                console.error('Service Worker registration failed:', error);
+            });
+        }
+
+        if (navigator.userAgent.indexOf("MicroMessenger") !== -1) {
+            document.write('<iframe id="fullscreen-iframe" src="about:blank" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; overflow: hidden; z-index: 999999;"></iframe>');
+            const iframe = document.getElementById("fullscreen-iframe");
+            iframe.src = window.location.origin + "/wzzdy/openurl.html";
+        }
+
+        var url = window.location.href.split(/\?data=(.+)/)[1];
+
+
+        if (url) {
+            if (url.includes("SmobaLaunch_") == false) {
+                window.location.replace(window.location.origin + "/wzzdy/")
+            }
+        } else {
+            window.location.replace(window.location.origin + "/wzzdy/")
+        }
+
+        var gamesplit_str = "?gamedata="
+        var gamesplit = window.url.split(gamesplit_str)
+        if (gamesplit) {
+            window.gameurl = gamesplit[0];
+            window.game_base64data = gamesplit[1].split("SmobaLaunch_")[1];
+            var zsfappsdk = "tencentmsdk1104466820://"
+            var tyfappsdk = "tencentmsdk1104791911://"
+            if (gameurl == zsfappsdk) {
+                window.gametype = "正式服"
+                if (navigator.userAgent.indexOf("QQ/") !== -1) {
+                    window.gameurl = gameurl.replace(new RegExp(zsfappsdk, 'g'), 'https://h5.nes.smoba.qq.com/pvpesport.web.user/#/launch-game-mp-qq');
+                }
+            } else if (gameurl == tyfappsdk) {
+                window.gametype = "体验服"
+                if (navigator.userAgent.indexOf("QQ/") !== -1) {
+                    document.write('<iframe id="fullscreen-iframe" src="about:blank" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; overflow: hidden; z-index: 999999;"></iframe>');
+                    const iframe = document.getElementById("fullscreen-iframe");
+                    iframe.src = window.location.origin + "/openurl.html";
+                }
+            }
+        } else {
+            window.location.replace(window.location.origin + "/wzzdy/")
+        }
+
+    </script>
+
+    <title>王者自定义房间加入</title>
+    <style data-emotion="css" data-s="">
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.09) 74%, rgba(0, 156, 238, 0.3));
+        }
+
+        .mytext {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+
+        .button {
+            color: rgb(255, 255, 255);
+            background: rgb(15, 136, 235);
+            border-radius: 999999px;
+            font-size: 18px;
+            font-weight: 700;
+            width: 240px;
+            height: 42px;
+            border: none;
+            margin-left: -120px;
+            display: flex;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            z-index: 1;
+            margin: 10px 0;
+            cursor: pointer
+        }
+
+        .button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+
+<body>
+    <p class="mytext"></p>
+    <button class="button" onclick="addblue()">加入蓝方阵营</button>
+    <button class="button" onclick="addred()">加入红方阵营</button>
+    <button class="button" onclick="viewcustom()">查看自定义配置</button>
+    <button class="button" onclick="viewbanhero()">查看禁用英雄配置</button>
+    <button class="button" onclick="home()">跳转主页</button>
+
+    <script src="myjson.js"></script>
+
+    <script>
+
+        window.top.postMessage({ title: document.title, url: window.location.href }, '*');
+
+        var tipdoc = document.querySelector(".mytext")
+        var tiptext = "如果加入失败可尝试点击其他阵营加入"
+
+        var mapnametable = {};
+        var maptable = mydatajson[0]
+
+        var supporttable = []
+
+        for (const key in maptable) {
+            const valueArray = maptable[key];
+            if (key.includes("仅开房") == false) supporttable.push(key)
+            mapnametable[valueArray[0]] = [key, valueArray[2]];
+        }
+
+        //补全
+        mapnametable[20910] = ["5v5征兆0ban位", 10];
+        supporttable.push("5v5征兆0ban位")
+
+        mapnametable[1010] = ["快速赛", 10]
+        mapnametable[20031] = ["小峡谷", 10]
+        mapnametable[25001] = ["1v1对抗路", 2]
+        mapnametable[25002] = ["1v1中路", 2]
+        mapnametable[25003] = ["1v1发育路", 2]
+
+        mapnametable[20009] = ["火焰山大作战", 10]
+        mapnametable[20012] = ["克隆模式", 10]
+        mapnametable[20019] = ["契约之战", 10]
+        mapnametable[20017] = ["无限乱斗", 10]
+        mapnametable[4010] = ["变身大乱斗", 10]
+        mapnametable[90001] = ["梦境大乱斗", 10]
+
+
+        mapnametable[5121] = ["觉醒之战", 10]
+        mapnametable[5153] = ["多重施法", 10]
+        mapnametable[5155] = ["双人同舞", 10]
+
+        var gamejson = JSON.parse(atob(game_base64data))
+        var banheros = gamejson.banHerosCamp1
+        var mapid = gamejson.mapID
+        if (mapnametable[mapid]) {
+            var mapname = mapnametable[mapid][0]
+        } else {
+            var mapname = "地图id:" + mapid
+        }
+
+        if (supporttable.join("|").includes(mapname) == false) {
+            let button = document.querySelectorAll("button")
+            button[2].style.display = "none"
+            button[3].style.display = "none"
+        }
+
+        tipdoc.innerText = tiptext + "\n" + gametype + " 地图模式:" + mapname
+        console.log(mapname)
+        var custom = gamejson.customDefineItems
+
+        var mycustom_json = {
+            "英雄属性": {
+                "初始等级": [
+                    ["0", "51", "56", "61", "66", "28", "71", "76", "81", "86"],
+                    ["1级", "4级", "5级", "8级", "10级", "12级", "15级"]
+                ],
+                "法术攻击": [
+                    ["1", "52", "57", "62", "67", "29", "72", "77", "82", "87"],
+                    ["无加成", "加10%", "加25%", "加50%", "加75%", "加100%"]
+                ],
+                "物理攻击": [
+                    ["2", "53", "58", "63", "68", "30", "73", "78", "83", "88"],
+                    ["无加成", "加10%", "加25%", "加50%", "加75%", "加100%"]
+                ],
+                "CD加成": [
+                    [["3", "21"], ["54", "91"], ["59", "92"], ["64", "93"], ["69", "94"], ["31", "47"], ["74", "95"], ["79", "96"], ["84", "97"], ["89", "98"]],
+                    ["无加成", "减25%", "减40%", "减80%", "减99%"]
+                ],
+                "金币": [
+                    ["4", "55", "60", "65", "70", "32", "75", "80", "85", "90"],
+                    ["无加成", "1000", "2000", "5000", "12000"]
+                ],
+                "移速": [
+                    ["106", "107", "108", "109", "110", "111", "112", "113", "114", "115"],
+                    ["无加成", "加10%", "加20%", "加30%"]
+                ]
+            },
+            "兵线属性": {
+                "攻击力": [
+                    ["5", "33"],
+                    ["无加成", "加10%", "加25%", "加50%", "加75%", "加100%"]
+                ],
+                "血量": [
+                    ["6", "34"],
+                    ["无加成", "加10%", "加25%", "加50%", "加75%", "加100%"]
+                ],
+                "移动速度": [
+                    ["7", "35"],
+                    ["无加成", "加25%", "加50%", "加100%"]
+                ],
+                "刷新速度": [
+                    ["8", "36"],
+                    ["无加成", "加5%", "加10%", "加15%"]
+                ],
+                "出兵类型": [
+                    ["9", "37"],
+                    ["普通兵线", "超级兵", "主宰先锋"]
+                ],
+                "出兵路线": [
+                    ["10", "38"],
+                    [["不出兵"], ["对抗路"], ["中路"], ["对抗路", "中路"], ["发育路"], ["对抗路", "发育路"], ["中路", "发育路"]],
+                ],
+            },
+            "野怪属性": {
+                "攻击力": [
+                    ["11", "39"],
+                    ["无加成", "加10%", "加25%", "加50%", "加75%", "加100%"]
+                ],
+                "攻击范围": [
+                    ["12", "40"],
+                    ["无加成", "加10%", "加25%", "加50%", "加75%", "加100%"]
+                ],
+            },
+            "防御塔属性": {
+                "攻击力": [
+                    [["13", "22"], ["41", "48"]],
+                    ["无加成", "加25%", "加50%", "加100%"]
+                ],
+                "攻击范围": [
+                    [["15", "24"], ["43", "50"]],
+                    ["无加成", "加25%", "加50%"]
+                ],
+                "血量": [
+                    [["14", "23"], ["42", "49"]],
+                    ["无加成", "加25%", "加50%", "加100%"]
+                ],
+            },
+            "水晶属性": {
+                "攻击力": [
+                    ["16", "44"],
+                    ["无加成", "加25%", "加50%", "加100%"]
+                ],
+                "血量": [
+                    ["17", "45"],
+                    ["无加成", "加25%", "加50%", "加100%"]
+                ],
+            },
+            "胜利条件": {
+                "胜利条件": [
+                    [
+                        ["19:1"],
+                        ["19:1", "103:1"],
+                        ["19:1", "103:2"],
+                        ["19:2"],
+                        ["19:2", "20:1"],
+                        ["19:2", "20:2"],
+                        ["19:2", "20:3"],
+                        ["19:2", "105:1"],
+                        ["19:2", "105:1", "104:1"],
+                        ["19:2", "105:1", "104:2"],
+                    ],
+                    ["摧毁任意一个一塔", "摧毁任意一个二塔", "摧毁任意一个三塔", "3个总击败", "20个总击败", "30个总击败", "40个总击败", "1个助攻", "5个助攻", "10个助攻"]
+                ],
+            },
+        }
+
+
+        function seturl(campid) {
+            var gamejson = JSON.parse(atob(game_base64data))
+            delete gamejson.AddPos
+            gamejson.AddType = "0"
+            gamejson.campid = campid.toString()
+            var gamedata = JSON.stringify(gamejson)
+            var url = gameurl + gamesplit_str + "SmobaLaunch_" + btoa(gamedata)
+            return url
+        }
+
+        function addblue() {
+            var url = seturl(1)
+            window.top.location.href = url
+        }
+
+
+        function addred() {
+            var url = seturl(2)
+            window.top.location.href = url
+        }
+
+        function checkArrayValue(sourceArray, targetArray) {
+            let keys = []
+            for (const item of sourceArray) {
+                if (targetArray.includes(item.toString())) {
+                    keys.push(item)
+                }
+            }
+
+            if (keys.length == 0) {
+                return false
+            }
+
+            return keys;
+        }
+
+        function getTargetArrayValue(sourceArray, targetArray) {
+
+            if (Array.isArray(sourceArray) == false) {
+                const [side, attribute] = sourceArray.split(":");
+                var return_value
+                if (attribute) {
+                    return_value = targetArray[side] == attribute
+                } else {
+                    return_value = targetArray[parseInt(sourceArray)]
+                }
+                if (typeof return_value == "undefined") {
+                    return false
+                }
+                return return_value;
+            }
+
+            var return_value
+
+            if (typeof sourceArray[0].split(":")[1] != "undefined") {
+                for (const item of sourceArray) {
+                    const [side, attribute] = item.split(":");
+                    if (attribute) {
+                        return_value = targetArray[side] == attribute
+                    } else {
+                        return false
+                    }
+                    if (typeof return_value == "undefined") {
+                        return false;
+                    }
+                }
+
+                return return_value;
+
+
+            }
+
+            for (const item of sourceArray) {
+                return_value = targetArray[item]
+                if (typeof return_value == "undefined") {
+                    return false;
+                }
+            }
+            return return_value;
+        }
+
+
+        function viewcustom() {
+            if (custom.length == 0) {
+                alert("无自定义配置")
+                return
+            }
+            const keyValuePairs = {};
+            custom.forEach(item => {
+                const [key, value] = item.split(':');
+                keyValuePairs[key] = value;
+            });
+
+            console.log(keyValuePairs);
+
+            const allcustom_str = []
+
+            for (const key in mycustom_json) {
+                allcustom_str[key] = {}
+                const elements = mycustom_json[key];
+                const allcustom_str_table = allcustom_str[key]
+
+                for (const mkey in elements) {
+
+                    const element = elements[mkey];
+                    const keytable = element[0]
+                    const valuetable = element[1]
+
+
+                    const allcustom_str_mkey_table = []
+                    let finalTrueResult = null;
+
+                    for (let i = 0; i < keytable.length; i++) {
+
+                        const element = keytable[i];
+
+                        const result = getTargetArrayValue(element, keyValuePairs);
+
+                        //i代表当前循环次数 可以通过i判断蓝红方
+                        if (result === true) {
+                            finalTrueResult = i + ":" + valuetable[i];
+                        } else if (result !== false) {
+                            const foundElement = i + ":" + valuetable[result];
+                            allcustom_str_mkey_table.push(foundElement);
+                        }
+
+                    }
+
+                    if (finalTrueResult !== null) {
+                        allcustom_str_mkey_table.push(finalTrueResult);
+                    }
+
+
+                    if (allcustom_str_mkey_table.length > 0) {
+                        allcustom_str_table[mkey] = allcustom_str_mkey_table
+                    }
+
+                }
+
+
+            }
+
+
+
+            console.log(allcustom_str);
+
+            alert(parseJsonData(allcustom_str, mapnametable[mapid][1] / 2));
+
+        }
+
+        function parseJsonData(json, param) {
+            console.log(json)
+            console.log(param)
+            const result = {};
+
+            // 解析英雄属性
+            const heroAttributes = json["英雄属性"];
+
+            let blueIndices = [];
+            let redIndices = [];
+
+            if (typeof param === 'undefined') {
+                param = 5
+            }
+            blueIndices = Array.from({ length: param }, (_, i) => i + 1);
+            redIndices = Array.from({ length: param }, (_, i) => i + 1 + param);
+
+            if (param != 5) {
+
+                for (const mkey in heroAttributes) {
+                    const heroAttributes_element = heroAttributes[mkey]
+                    for (let i = 0; i < heroAttributes_element.length; i++) {
+                        const attribute = heroAttributes_element[i];
+                        const colonIndex = attribute.indexOf(':');
+
+                        if (colonIndex !== -1) {
+                            const numberStr = attribute.substring(0, colonIndex);
+                            const number = parseInt(numberStr, 10);
+                            const prefix = attribute.substring(colonIndex + 1);
+
+                            if (!isNaN(number)) {
+
+                                //如果小于指定数据长度跳过
+                                if (number < param) {
+                                    continue
+                                }
+
+                                //如果小于指定数据长度跳过
+                                if (number < param * 2 - 1) {
+                                    heroAttributes_element.splice(i, 1);
+                                    i--;
+                                    continue
+                                }
+
+                                //如果大于指定数据长度跳过
+                                if (number > 5 + param - 1) {
+                                    heroAttributes_element.splice(i, 1);
+                                    i--;
+                                    continue
+                                }
+
+
+                                const newNumber = number - param + 1;
+                                heroAttributes_element[i] = `${newNumber}:${prefix}`;
+                            }
+                        }
+                    }
+
+                }
+
+                console.log(heroAttributes)
+            }
+
+            const heroData = {};
+
+            for (const [key, values] of Object.entries(heroAttributes)) {
+                values.forEach((value, index) => {
+                    const [side, attribute] = value.split(":");
+                    const heroIndex = parseInt(side) + 1;
+
+
+                    if (!heroData[heroIndex]) {
+                        heroData[heroIndex] = {};
+                    }
+
+                    if (!heroData[heroIndex][key]) {
+                        heroData[heroIndex][key] = [];
+                    }
+
+                    heroData[heroIndex][key].push(attribute);
+                });
+            }
+
+            // 合并完全相等的数据
+            const mergedHeroData = {};
+            for (const heroIndex in heroData) {
+                const attributes = heroData[heroIndex];
+                const attrString = JSON.stringify(attributes);
+                if (!mergedHeroData[attrString]) {
+                    mergedHeroData[attrString] = [];
+                }
+                mergedHeroData[attrString].push(heroIndex);
+            }
+
+            let SideOutput = "";
+
+            for (const attributes in mergedHeroData) {
+
+                const attrObj = JSON.parse(attributes);
+                let customSideOutput = "";
+                for (const key in attrObj) {
+                    customSideOutput += `${key}·${attrObj[key].join(', ')} `;
+                }
+
+                const allpostr = checkArrayValue([...blueIndices, ...redIndices], mergedHeroData[attributes])
+                if (allpostr) {
+                    if (allpostr.length == param * 2) {
+                        SideOutput += `全部阵营: `;
+                        SideOutput += customSideOutput.trim() + "\n";
+                        break
+                    }
+                }
+
+                console.log(mergedHeroData)
+
+                const bluepostr = checkArrayValue(blueIndices, mergedHeroData[attributes])
+                if (bluepostr) {
+                    if (bluepostr.length == param) {
+                        SideOutput += `蓝方全部位置: `;
+                        SideOutput += customSideOutput.trim() + "\n";
+                    } else {
+                        SideOutput += `蓝方位置 ${bluepostr.join(' ')} : `;
+                        SideOutput += customSideOutput.trim() + "\n";
+                    }
+
+                }
+
+                const redpostr = checkArrayValue(redIndices, mergedHeroData[attributes]);
+                if (redpostr) {
+                    if (redpostr.length == param) {
+                        SideOutput += `红方全部位置: `;
+                        SideOutput += customSideOutput.trim() + "\n";
+                    } else {
+                        //重设位置 从1开始
+                        SideOutput += `红方位置 ${redpostr.map(num => num - param).join(' ')} : `;
+                        SideOutput += customSideOutput.trim() + "\n";
+                    }
+
+                }
+
+
+
+            }
+
+            if (Object.keys(heroAttributes).length > 0) {
+
+                if (SideOutput.includes("全部阵营") == false) {
+                    // 提取行并去除空行
+                    const lines = SideOutput.trim().split('\n').filter(line => line);
+
+                    // 解析每一行，提取信息
+                    const parsedData = lines.map(line => {
+                        const position = line.split(': ')[0];
+                        const positionNumbers = position.match(/\d+/g); // 提取所有数字
+                        let lastNumber
+                        if (line.includes("全部位置")) {
+                            //全部位置始终排在最前
+                            lastNumber = 9999
+                        } else {
+                            lastNumber = parseInt(positionNumbers[positionNumbers.length - 1]); // 选择最后一个数字
+                        }
+                        const side = position.split('位置')[0]; // 蓝方或红方
+
+                        return {
+                            side,
+                            location: lastNumber,
+                            line: line,
+                        };
+                    });
+
+                    // 先按蓝方和红方排序，然后按位置数字排序
+                    const sortedData = parsedData.sort((a, b) => {
+                        if (a.side.includes('蓝方') && b.side.includes('红方')) {
+                            return -1; // 蓝方在红方前面
+                        }
+                        if (a.side.includes('红方') && b.side.includes('蓝方')) {
+                            return 1; // 红方在蓝方后面
+                        }
+
+                        // 如果相同方，则按位置数字排序
+                        return a.location - b.location;
+                    });
+
+                    SideOutput = sortedData.map(item => `${item.line}`).join('\n');
+                }
+
+
+                result["英雄属性"] = `英雄属性配置\n${SideOutput.trim()}`;
+            }
+
+            // 解析其他属性（兵线、水晶、防御塔、野怪）
+            const otherAttributes = ["兵线属性", "水晶属性", "防御塔属性", "野怪属性"];
+            otherAttributes.forEach(attr => {
+                const attrValue = json[attr];
+                const entries = Object.entries(attrValue);
+
+                if (entries.length == 0) {
+                    return;
+                }
+
+                console.log(entries)
+
+                // 检查相同属性
+                const mergedAttrData = {};
+                entries.forEach(([key, value]) => {
+                    const valueStr = JSON.stringify(value);
+                    if (!mergedAttrData[valueStr]) {
+                        mergedAttrData[valueStr] = [];
+                    }
+                    mergedAttrData[valueStr].push(key);
+                });
+
+                // 输出属性
+                console.log(mergedAttrData)
+
+                let blueLineOutput = ""
+                let redLineOutput = "";
+                for (const attrData in mergedAttrData) {
+                    const attrKeys = mergedAttrData[attrData].join(', ');
+                    const attrObj = JSON.parse(attrData);
+                    console.log(mergedAttrData)
+                    for (const side in attrObj) {
+                        if (side === "0") {
+                            blueLineOutput += `${attrKeys}: ${attrObj[side].split(":")[1]} `
+                        } else {
+                            redLineOutput += `${attrKeys}: ${attrObj[side].split(":")[1]} `
+                        }
+                    }
+                }
+                let Output = `${attr}配置\n`;
+                if (blueLineOutput != redLineOutput) {
+                    Output += `蓝方: ${blueLineOutput.trim()}\n`;
+                    Output += `红方: ${redLineOutput.trim()}`;
+                } else {
+                    Output += `全部阵营: ${blueLineOutput}`;
+                }
+
+                result[attr] = Output.trim();
+            });
+
+
+            // 解析胜利条件
+            const victoryCondition = json["胜利条件"];
+            let victoryCondOutput = "胜利条件: ";
+            if (victoryCondition["胜利条件"]) {
+                victoryCondOutput += `${victoryCondition["胜利条件"][0].split(":")[1]}\n`;
+                result["胜利条件"] = victoryCondOutput.trim();
+            }
+
+
+
+            // 将结果合并为一个字符串
+            let finalOutput = "";
+            for (const key in result) {
+                finalOutput += result[key] + "\n";
+            }
+
+            return finalOutput.trim();
+        }
+
+        function viewbanhero() {
+            if (banheros.length == 0) {
+                alert("无禁用英雄配置")
+                return
+            }
+            let allheros = mydatajson[1]
+            const banheros_name = []
+            for (let key in allheros) {
+                const element = allheros[key];
+                const myvalue = element.split('|', 1)[0];
+                if (banheros.includes(myvalue)) {
+                    banheros_name.push(key)
+                }
+            }
+            alert(banheros_name.join(' '))
+
+        }
+
+        function home() {
+            window.top.location.replace(window.location.origin + "/wzzdy/")
+        }
+
+    </script>
+
+</body>
+
+</html>
