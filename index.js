@@ -93,6 +93,22 @@ var allbutton = document.querySelectorAll(".mybutton")
 var work_message = "null"
 
 function 打开链接(url) {
+    var zsfappsdk = "tencentmsdk1104466820://"
+    var tyfappsdk = "tencentmsdk1104791911://"
+    if (navigator.userAgent.indexOf("QQ/") !== -1) {
+        //正式服
+        if (url.includes(zsfappsdk)) {
+            url = url.replace(new RegExp(zsfappsdk, 'g'), 'https://h5.nes.smoba.qq.com/pvpesport.web.user/#/launch-game-mp-qq');
+        } else if ((url.includes(tyfappsdk))) {
+            mdui.alert({
+                headline: "提示",
+                description: "QQ内无法打开体验服的房间 如想打开请尝试在浏览器打开",
+                confirmText: "我知道了",
+                onConfirm: () => console.log("confirmed"),
+            });
+            return
+        }
+    }
     window.location.href = url
     mdui_snackbar({
         message: "启动成功 如没反应请检查是否安装相关应用或尝试在浏览器打开",
@@ -453,7 +469,7 @@ function 生成链接(func) {
 
 function processLink(link) {
     // 截取内容
-    const afterDomain = link.split('//tools.mgtv100.com/short/')[1];
+    const afterDomain = link.split('//aiu.pub/')[1];
     // 将所有 / 替换为.
     const replacedContent = afterDomain.replace(/\//g, ".");
     return replacedContent;
@@ -461,7 +477,7 @@ function processLink(link) {
 
 //从 https://api.aa1.cn/ 找的api链接
 function getShortLink(longUrl) {
-    const requestUrl = `https://tools.mgtv100.com/external/v1/short_urls?url=${encodeURIComponent(longUrl)}`;
+    const requestUrl = `https://aiu.pub/api/link?url=${encodeURIComponent(longUrl)}`;
 
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -469,7 +485,7 @@ function getShortLink(longUrl) {
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
                 const response = JSON.parse(this.responseText);
-                resolve(response.data.short_url);
+                resolve(response.data);
             } else {
                 reject(new Error(`HTTP error! status: ${this.status}`));
             }
@@ -678,6 +694,47 @@ allbutton[0].onclick = function () {
     生成链接()
 }
 
+function showqr(url, func) {
+    let handleResize
+    mdui.confirm({
+        headline: "通过二维码进入王者房间",
+        description: "提示：如果你是房间的创建者 你可以点击确认打开游戏",
+        body: '<img>',
+        confirmText: "确定",
+        cancelText: "取消",
+        onConfirm: () => func(),
+        onCancel: () => console.log("canceled"),
+        onOpen: (dia) => {
+            // 添加一个img元素
+            dia.bodyRef.value.appendChild(document.createElement('img'))
+            let timeoutId;
+            handleResize = function () {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    dia.updateComplete.then(() => {
+                        let img = dia.bodyRef.value.querySelector("img")
+                        let div = document.createElement("div");
+                        let size = dia.bodyRef.value.clientWidth
+                        var qrcode = new QRCode(div, {
+                            width: size,
+                            height: size
+                        });
+                        qrcode.makeCode(url);
+                        let dataurl = div.querySelector("canvas").toDataURL()
+                        img.src = dataurl
+                    })
+                }, 100);
+            }
+            window.addEventListener('resize', handleResize);
+            handleResize()
+        },
+        onClose: () => {
+            window.removeEventListener('resize', handleResize);
+        },
+    });
+}
+
+
 allbutton[1].onclick = function () {
     if (work_message != "null") {
         mdui_snackbar({
@@ -704,7 +761,7 @@ allbutton[1].onclick = function () {
                 onClick: () => {
                     if (window.openurl) {
                         var openurl = window.openurl
-                        getShortLink(window.location.origin + "/wzzdy/Smoba.html?data=" + openurl)
+                        getShortLink(window.location.origin + "/Smoba.html?data=" + openurl)
                             .then(shortLink => {
                                 murl = processLink(shortLink);
                                 work_message = "null"
@@ -714,8 +771,10 @@ allbutton[1].onclick = function () {
                                     confirmText: "确认",
                                     cancelText: "取消",
                                     onConfirm: () => {
-                                        let url = replaceContent(myedit.value, window.location.origin + "/wzzdy/data.html?" + murl, 0, openurl)
-                                        复制文本(url)
+                                        let url = replaceContent(myedit.value, window.location.origin + "/data.html?" + murl, 0, openurl)
+                                        showqr(url, function () {
+                                            复制文本(url)
+                                        })
                                     },
                                     onCancel: () => console.log("canceled"),
                                 });
@@ -732,7 +791,7 @@ allbutton[1].onclick = function () {
                             });
                     } else {
                         生成链接(function (openurl, tiptext) {
-                            getShortLink(window.location.origin + "/wzzdy/Smoba.html?data=" + openurl)
+                            getShortLink(window.location.origin + "/Smoba.html?data=" + openurl)
                                 .then(shortLink => {
                                     murl = processLink(shortLink);
                                     work_message = "null"
@@ -742,9 +801,11 @@ allbutton[1].onclick = function () {
                                         confirmText: "确认",
                                         cancelText: "取消",
                                         onConfirm: () => {
-                                            let url = replaceContent(myedit.value, window.location.origin + "/wzzdy/data.html?" + murl, 0, openurl)
-                                            复制文本(url)
-                                            打开链接(openurl)
+                                            let url = replaceContent(myedit.value, window.location.origin + "/data.html?" + murl, 0, openurl)
+                                            showqr(url, function () {
+                                                复制文本(url)
+                                                打开链接(openurl)
+                                            })
                                         },
                                         onCancel: () => console.log("canceled"),
                                     });
@@ -784,7 +845,7 @@ allbutton[1].onclick = function () {
                                 return false
                             }
                             let openurl = "tencentmsdk" + appid + "://?gamedata=" + gamedata
-                            getShortLink(window.location.origin + "/wzzdy/opengame.html?data=" + openurl)
+                            getShortLink(window.location.origin + "/opengame.html?data=" + openurl)
                                 .then(shortLink => {
                                     murl = processLink(shortLink);
                                     work_message = "null"
@@ -794,7 +855,7 @@ allbutton[1].onclick = function () {
                                         confirmText: "确认",
                                         cancelText: "取消",
                                         onConfirm: () => {
-                                            let url = replaceContent(myedit.value, window.location.origin + "/wzzdy/data.html?" + murl, 1, openurl)
+                                            let url = replaceContent(myedit.value, window.location.origin + "/data.html?" + murl, 1, openurl)
                                             复制文本(url)
                                         },
                                         onCancel: () => console.log("canceled"),
@@ -834,13 +895,15 @@ allbutton[1].onclick = function () {
 }
 
 allbutton[2].onclick = function () {
-    // 创建<span>元素  
-    var span = document.createElement('span');
     // 设置<span>元素的文本内容  
+    // 创建<span>元素  
+    //var span = document.createElement('span');
+    /*
     span.innerHTML = '<span slot="description">提示：共有六种方法 显示不全可手动向下滑动查看<br>方法一：解除/添加人机/不满人无法开启限制<br>打开游戏训练营 选择英雄后 进入加载页 打开网页 启动即可<br>方法二：链接邀请<br>请点击复制链接按钮查看具体方法<br>方法三：游戏内邀请<br>账号A启动 账号B在游戏大厅展开好友列表 点击账号A头像 点击滴滴 滴滴后过一会即可在账号A显示邀请按钮 账号A点击邀请即可(账号B不可是组队状态)<br>方法四：QQ内邀请<br>在普通房间对离线好友点击qq邀请，开好自定义房间后再点确定邀请。随后可将发送给qq好友的qq邀请链接转发至各群中。<br>缺点：对一个qq好友每天只能点击5次qq邀请按钮，链接不能实时显示人数<br>方法五：持久化可在游戏内邀请指定人<br>让好友邀请你进任意房间（非队伍），点击拒绝。开好无cd房间，在邮箱中点击发起邀请，显示"加入失败"不用管，回到房间即自动邀请那个好友。一次卡邮箱长期可邀请<br>方法六：显示附近的人/最近的人<br>返回大厅展开好友列表，即可邀请到开黑车队/附近的人/<br></span>';
+    */
     mdui.alert({
         headline: "分享房间教程",
-        description: span,
+        description: "点击复制链接后 即可分享房间",
         confirmText: "我知道了",
         onConfirm: () => console.log("confirmed"),
     });
@@ -958,7 +1021,7 @@ allbutton[5].onclick = function () {
 
                         var openurl = "tencentmsdk1104466820://?gamedata=" + game_data
 
-                        getShortLink(window.location.origin + "/wzzdy/Smoba.html?data=" + openurl)
+                        getShortLink(window.location.origin + "/Smoba.html?data=" + openurl)
                             .then(shortLink => {
                                 murl = processLink(shortLink);
                                 work_message = "null"
@@ -968,7 +1031,7 @@ allbutton[5].onclick = function () {
                                     confirmText: "确认",
                                     cancelText: "取消",
                                     onConfirm: () => {
-                                        复制文本(window.location.origin + "/wzzdy/data.html?" + murl + "\n该链接由原王者赛宝房间链接" + value + "转换 可防止卡房 本链接由https://huajiqaq.github.io/wzzdy/的 赛宝还原 转换")
+                                        复制文本(window.location.origin + "/data.html?" + murl + "\n该链接由原王者赛宝房间链接" + value + "转换 可防止卡房 本链接由https://huajiqaq.github.io/的 赛宝还原 转换")
                                     },
                                     onCancel: () => console.log("canceled"),
                                 });
@@ -1014,65 +1077,6 @@ allbutton[5].onclick = function () {
         },
         onCancel: () => console.log("canceled"),
     });
-}
-
-function showqr(url) {
-    let handleResize
-    mdui.dialog({
-        headline: "通过二维码进入王者房间",
-        body: '<img>',
-        actions: [
-            {
-                text: "我知道了",
-            }
-        ],
-        onOpen: (dia) => {
-            let timeoutId;
-            handleResize = function () {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(() => {
-                    dia.updateComplete.then(() => {
-                        let img = dia.querySelector("img")
-                        let div = document.createElement("div");
-                        let size = dia.bodyRef.value.clientWidth
-                        var qrcode = new QRCode(div, {
-                            width: size,
-                            height: size
-                        });
-                        qrcode.makeCode(url);
-                        let dataurl = div.querySelector("canvas").toDataURL()
-                        img.src = dataurl
-                    })
-                }, 100);
-            }
-            window.addEventListener('resize', handleResize);
-            handleResize()
-        },
-        onClose: () => {
-            window.removeEventListener('resize', handleResize);
-        },
-    });
-}
-
-allbutton[6].onclick = function () {
-    if (window.openurl) {
-        mdui.confirm({
-            headline: "提示",
-            description: "本功能会默认生成上一次启动的房间的分享二维码 是否开始生成二维码?",
-            confirmText: "确认",
-            cancelText: "取消",
-            onConfirm: () => {
-                showqr(window.location.origin + "/wzzdy/Smoba.html?data=" + window.openurl)
-            },
-            onCancel: () => console.log("canceled"),
-        });
-    } else {
-        mdui_snackbar({
-            message: "你必须先启动一次才能生成",
-            action: "我知道了",
-            onActionClick: () => console.log("click action button")
-        });
-    }
 }
 
 function createTooltip(title, content) {
@@ -1250,7 +1254,7 @@ var heroButton = document.getElementsByClassName("herobutton")
 
 function 获取选择英雄名() {
     var editvalue = document.querySelectorAll(".myedit")[1].value
-    if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
+    if (editvalue && JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
         var heros_json = JSON.parse(localStorage.getItem("custom_heros"))
         if (heros_json[editvalue].includes("suiji")) {
             return heros_json[editvalue]
