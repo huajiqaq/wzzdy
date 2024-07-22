@@ -14,11 +14,13 @@
             });
         }
 
+        /*
         if (navigator.userAgent.indexOf("QQ/") !== -1 || navigator.userAgent.indexOf("MicroMessenger") !== -1) {
             document.write('<iframe id="fullscreen-iframe" src="about:blank" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; overflow: hidden; z-index: 999999;"></iframe>');
             const iframe = document.getElementById("fullscreen-iframe");
-            iframe.src = window.location.origin + "/wzzdy/openurl.html";
+            iframe.src = window.location.origin + "/openurl.html";
         }
+        */
 
         var issupport = 'any' in Promise;
 
@@ -35,7 +37,7 @@
             }
             // iOS设备检测  
             else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                window.location.replace("https://apps.apple.com/cn/app/id1288723196")
+                place("https://apps.apple.com/cn/app/id1288723196")
             }
             // Android设备检测  
             else if (/Android/.test(userAgent)) {
@@ -265,7 +267,6 @@
                     <mdui-button class="mybutton">房间列表</mdui-button>
                     <mdui-button class="mybutton">Q群</mdui-button>
                     <mdui-button class="mybutton">赛宝还原</mdui-button>
-                    <mdui-button class="mybutton">二维码分享</mdui-button>
 
 
 
