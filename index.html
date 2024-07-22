@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>跳转页面</title>
+    <!-- 设置页面在加载后1秒跳转 -->
+    <meta http-equiv="refresh" content="1;url=https://wzzdy.zeabur.app/">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        #message {
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            // 显示提示信息
+            document.getElementById('message').style.display = 'block';
+
+            // 尝试卸载Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations()
+                    .then(function (registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    });
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div id="message">
+        <p>此页面将在1秒后跳转到最新网页 建议收藏此页以随时查看最新地址</p>
+    </div>
+</body>
+
+</html>
