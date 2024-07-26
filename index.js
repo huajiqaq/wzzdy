@@ -1,6 +1,6 @@
 window.onload = function () {
     document.querySelector("mdui-layout-main").querySelector("mdui-card").style.visibility = "unset"
-    document.querySelector("body > mdui-layout > mdui-top-app-bar > mdui-top-app-bar-title").innerText = "王者自定义房间 4.3"
+    document.querySelector("body > mdui-layout > mdui-top-app-bar > mdui-top-app-bar-title").innerText = "王者自定义房间 4.2"
 }
 
 const tip1 = "没有配置 请先点击管理配置新建配置"
@@ -3816,20 +3816,6 @@ document.getElementsByClassName('color-img')[0].addEventListener('input', functi
     }
 })
 
-document.getElementsByClassName("colorbutton")[0].onclick = function () {
-
-    if (color_message != "null") {
-        mdui_snackbar({
-            message: color_message,
-            action: "我知道了",
-            onActionClick: () => console.log("click action button")
-        });
-        return
-    }
-
-    localStorage.setItem("wzzdy_mythemecolor", "null")
-    mdui.removeColorScheme()
-}
 
 document.querySelector(".color-scheme").addEventListener("open", function () {
     document.querySelector(".color_outlined").style.display = "none"
