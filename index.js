@@ -877,7 +877,7 @@ allbutton[1].onclick = function () {
                 },
             }
         ],
-        body: '<mdui-text-field class="copydialog_edit" variant="filled"  name="" style="padding-top: 10px;" label="生成规则"></mdui-text-field>\n<p><br>如显示不全可向下滑动查看更多内容<br>当生成规则包括以下字符 会自动被替换为指定字符 默认生成规则为url<br>mode --> 模式名<br>hero --> 当前禁用英雄配置名 ban --> 当前禁用英雄配置<br>custom --> 当前自定义配置名<br>url --> 最终生成链接<br>gametype --> 游戏类型 例如正式服<br>\\n --> 换行<br>如不做特别标记 链接法和转换法复制规则默认相同 如想精准设置 请将配置与配置间直接使用|||分割即可 例如 map url|||gametype map url</p>',
+        body: '<mdui-text-field class="copydialog_edit" variant="filled"   style="padding-top: 10px;" label="生成规则"></mdui-text-field>\n<p><br>如显示不全可向下滑动查看更多内容<br>当生成规则包括以下字符 会自动被替换为指定字符 默认生成规则为url<br>mode --> 模式名<br>hero --> 当前禁用英雄配置名 ban --> 当前禁用英雄配置<br>custom --> 当前自定义配置名<br>url --> 最终生成链接<br>gametype --> 游戏类型 例如正式服<br>\\n --> 换行<br>如不做特别标记 链接法和转换法复制规则默认相同 如想精准设置 请将配置与配置间直接使用|||分割即可 例如 map url|||gametype map url</p>',
         onOpen: (dia) => {
             myedit = dia.getElementsByClassName("copydialog_edit")[0]
             myedit.value = localStorage.getItem("wzzdy_copyrule")
@@ -1190,6 +1190,7 @@ document.querySelectorAll(".myedit")[2].onclick = function () {
 }
 
 function loadherolist(batchSize = 10) {
+    loadherolist = false
     const items = Object.keys(mydatajson[1]);
     let currentIndex = 0;
     const targetList = document.getElementsByClassName('myherolist')[0];
@@ -1599,7 +1600,7 @@ function 加载英雄配置() {
                     action: "我知道了",
                     onActionClick: () => console.log("click action button")
                 });
-                loadherolist(10)
+                if (typeof loadherolist == "function") loadherolist(10)
             }
         }
 
@@ -2181,6 +2182,7 @@ var zhenyingDocBlue = document.getElementsByClassName("zhenying_blue")
 var zhenyingDocRed = document.getElementsByClassName("zhenying_red")
 
 function loadmenu() {
+    loadmenu = false
     var herolist = Array.from({ length: 5 }, (_, i) => (i + 1).toString() + "号")
 
     var xvanshouBlue = document.getElementsByClassName("xvanshou_blue")[0]
@@ -2816,7 +2818,7 @@ function 加载自定义配置() {
                     action: "我知道了",
                     onActionClick: () => console.log("click action button")
                 });
-                loadmenu()
+                if (typeof loadmenu == "function") loadmenu()
             }
 
         }
@@ -3671,7 +3673,7 @@ function checkpeiload() {
             action: "我知道了",
             onActionClick: () => console.log("click action button")
         });
-        createcustom_tab(peiedit)
+        if (typeof createcustom_tab == "function") createcustom_tab(peiedit)
     }
 }
 
