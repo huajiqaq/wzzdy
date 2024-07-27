@@ -886,6 +886,7 @@ allbutton[1].onclick = function () {
             })
             let mdui_buttons = dia.querySelectorAll("mdui-button")
             mdui_buttons.forEach(mdui_button => {
+                mdui_button.style.margin = "0px"
                 let button = mdui_button.shadowRoot.querySelector("button")
                 button.style.padding = "0 0.3rem"
             });
@@ -3952,7 +3953,7 @@ function showeditdia(textv, func, ele) {
         var json_fytlist = myjson[3]
         var json_sjlist = myjson[4]
         let list_pos = getIndexByTagName(textv.parentElement, tabPanel.parentElement);
-        let textv_pos = getIndexByTagName(textv.parentElement);
+        let textv_pos = getIndexByTagName(textv);
         let alltab = []
 
         if (list_pos == 0) {
@@ -3978,7 +3979,7 @@ function showeditdia(textv, func, ele) {
             alltab = [mydata[0], mydata[1]]
         } else if (list_pos == 5) {
             //胜利条件
-            let mydata = json_sjlist[textv_pos]
+            let mydata = json_sjlist[textv_pos][0]
             //属性 位置的对应关系
             alltab = [mydata]
         }
@@ -4005,6 +4006,12 @@ function showeditdia(textv, func, ele) {
         description: step[0],
         body: '<p>如显示不全可向下滑动查看更多内容</p><div class="radiodiv"></div>',
         onOpen: (dia) => {
+            let mdui_buttons = dia.querySelectorAll("mdui-button")
+            mdui_buttons.forEach(mdui_button => {
+                mdui_button.style.margin = "0px"
+                let button = mdui_button.shadowRoot.querySelector("button")
+                button.style.padding = "0 0.3rem"
+            });
             radiodiv = dia.getElementsByClassName("radiodiv")[0]
             step[1]()
         },
