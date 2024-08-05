@@ -477,6 +477,14 @@ function processLink(link) {
 
 //从 https://api.aa1.cn/ 找的api链接
 function getShortLink(longUrl) {
+    if (longUrl.startsWith('https://') != true) {
+        longUrl = `https://baidu.com/${longUrl}`
+        mdui.snackbar({
+            message: "当前非正式环境(https) 自动为链接添加https://baidu.com/ 故生成链接不可用 请将源码放入正式环境中以启用该功能",
+            action: "我知道了",
+            onActionClick: () => console.log("click action button")
+        });
+    }
     const requestUrl = `https://aiu.pub/api/link?url=${encodeURIComponent(longUrl)}`;
 
     return new Promise((resolve, reject) => {
