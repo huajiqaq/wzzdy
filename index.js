@@ -49,7 +49,7 @@ if (localStorage.getItem("wzzdy_freetip") != "0.3") {
 if (localStorage.getItem("wzzdy_createtip") != "0.2") {
     mdui.alert({
         headline: "提示",
-        description: "建议点击网页内「使用教程」按钮来查看文字教程 现在又可在训练营内加载界面打开网页建房来绕过开房限制了 如果使用赛宝开房遇到恶意卡房 可尝试 在训练营卡房后进入赛宝房间 这样可以邀请QQ好友 或尝试本网页内的赛宝还原 将赛宝链接转换为网页链接分享",
+        description: "建议点击网页内「使用教程」按钮来查看文字教程 现在又可在训练营内加载界面打开网页建房来新增人机了",
         confirmText: "我知道了",
         onConfirm: () => localStorage.setItem("wzzdy_createtip", "0.2"),
     });
