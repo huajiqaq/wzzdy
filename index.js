@@ -26,10 +26,10 @@ if (localStorage.getItem("wzzdy_xgluatip") != "0.1") {
 */
 
 
-if (localStorage.getItem("wzzdy_freetip") != "0.2") {
+if (localStorage.getItem("wzzdy_freetip") != "0.3") {
     mdui.dialog({
         headline: "提示",
-        description: "本网页完全免费且开源 如果你是购买得到的 你可能被骗了",
+        description: "本网页完全免费且开源 如果你是购买得到的 你可能被骗了 本网页已停止维护 建议点击更多链接按钮浏览其他自定义网页或使用王者赛宝官方网页创建房间",
         actions: [
             {
                 text: "复制开源链接",
@@ -42,7 +42,7 @@ if (localStorage.getItem("wzzdy_freetip") != "0.2") {
                 text: "我知道了",
             }
         ],
-        onClose: () => localStorage.setItem("wzzdy_freetip", "0.2"),
+        onClose: () => localStorage.setItem("wzzdy_freetip", "0.3"),
     });
 }
 
@@ -932,16 +932,36 @@ document.querySelectorAll(".myedit")[0].onclick = function () {
 
 
 allbutton[3].onclick = function () {
-    mdui.confirm({
-        headline: "提示",
-        description: "该功能来自第三方网站 点击确认 将链接到第三方网站 是否继续？",
-        confirmText: "确认",
-        cancelText: "取消",
-        onConfirm: () => {
-            window.location.href = "http://dadao.kuaibiji.info/#/wzsb?room"
+    var newDiv = document.createElement('div');
 
-        },
-        onCancel: () => console.log("canceled"),
+    var links = [
+        { text: '创房工具', url: 'http://dadao.kuaibiji.info/#/wzsb' },
+        { text: '小鬼自定义', url: 'https://xg5020.top/' },
+        { text: '快捷房间', url: 'https://xg5020.top/kjfj/' },
+    ];
+
+    links.forEach(function (link) {
+        var a = document.createElement('a');
+        a.textContent = link.text;
+        a.href = link.url;
+        a.target = '_blank';
+        a.style.color = 'rgb(var(--mdui-color-primary))';
+
+        newDiv.appendChild(a);
+        newDiv.appendChild(document.createElement('br'));
+    });
+    var span = document.createElement('span');
+    // 设置<span>元素的文本内容  
+    span.innerHTML = '<span slot="description"><h3>本网页已不维护 以下是二次分发本网页且维护的</span>';
+    mdui.dialog({
+        headline: "更多链接",
+        description: span,
+        actions: [
+            {
+                text: "我知道了",
+            }
+        ],
+        body: newDiv
     });
 }
 
@@ -949,140 +969,70 @@ allbutton[4].onclick = function () {
     复制文本("746855036")
 }
 
-allbutton[5].onclick = function () {
-    mdui.prompt({
-        headline: "提示",
-        description: "源码可到http://mtw.so/5Fog8o 下载 搭建后修改myapiurl变量为自己搭建即可 该功能可防止赛宝卡房 输入赛宝链接即可 链接获取点击赛宝房间页面下方分享按钮复制链接即可 访问可能较慢 请耐心等待 该功能使用bug实现 随时可能失效",
-        confirmText: "确认",
-        cancelText: "取消",
-        onConfirm: (value) => {
-            value = decodeURIComponent(value)
-            try {
-                const pathPart = value.split('room-quick/')[1]; // 获取'room-quick/'之后的部分
-                // 去除后面的内容以及可能存在的查询参数
-                roomID = pathPart.split('?')[0].split('&')[0]
-            } catch {
-                mdui_snackbar({
-                    message: "输入链接有误",
-                    action: "我知道了",
-                    onActionClick: () => console.log("click action button")
-                });
-                return false
-            }
-            var myapiurl = "https://ouwhiy7vaifi44w6ee26vxikny0bzigt.lambda-url.ap-east-1.on.aws"
-            apiurl = myapiurl + "/getroom_smoba?id=" + roomID + "&t=" + Date.now()
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', apiurl, true);
 
-            work_message = "正在请求复制链接中 请稍等"
-
-            xhr.onload = function () {
-
-                if (this.status >= 200 && this.status < 300) {
-                    var mdata = JSON.parse(this.responseText)
-                    if (mdata.gamedata) {
-
-                        const findstr = 'SmobaLaunch_'
-                        var game_json = JSON.parse(atob(mdata.gamedata.split(findstr)[1]));
-                        const comm_fields = mdata.comm_fields
-                        var banheros = []
-                        var custom_params = mdata.battle_custom_params
-
-                        for (let index = 0; index < comm_fields.length; index++) {
-                            const element = comm_fields[index];
-                            if (element.name.includes("hero")) {
-                                const allow_heros = element.value
-
-                                console.log(allow_heros)
-
-                                const allheros = mydatajson[1]
-
-                                for (let key in allheros) {
-                                    const element = allheros[key];
-                                    const myvalue = element.split('|', 1)[0];
-                                    if (allow_heros.includes(myvalue) != true) {
-                                        banheros.push(myvalue)
-                                    }
-                                }
-
-                            }
-                        }
-
-                        if (banheros.length > 0) {
-                            game_json.banHerosCamp1 = banheros
-                            game_json.banHerosCamp2 = banheros
-                        }
-
-                        if (custom_params) {
-                            game_json.customDefineItems = custom_params
-                        }
-
-                        console.log(game_json)
-
-                        const game_data = findstr + btoa(JSON.stringify(game_json))
-                        console.log(game_data)
-
-                        mdui_snackbar({
-                            message: "已获取到数据 请耐心等待 正在请求生成短链中",
-                            action: "我知道了",
-                            onActionClick: () => console.log("click action button")
-                        });
-
-                        var openurl = "tencentmsdk1104466820://?gamedata=" + game_data
-
-                        getShortLink(window.location.origin + "/Smoba.html?data=" + openurl)
-                            .then(shortLink => {
-                                murl = processLink(shortLink);
-                                work_message = "null"
-                                mdui.confirm({
-                                    headline: "提示",
-                                    description: "已获取到数据 是否复制链接？",
-                                    confirmText: "确认",
-                                    cancelText: "取消",
-                                    onConfirm: () => {
-                                        复制文本(window.location.origin + "/data.html?" + murl + "\n该链接由原王者赛宝房间链接" + value + "转换 可防止卡房 本链接由https://wzzdy.zeabur.app/的 赛宝还原 转换")
-                                    },
-                                    onCancel: () => console.log("canceled"),
-                                });
-                            })
-                            .catch(error => {
-                                work_message = "null"
-                                mdui.alert({
-                                    headline: "提示",
-                                    description: "出现错误 无法请求 请检查网络",
-                                    confirmText: "我知道了",
-                                    onConfirm: () => console.log("confirmed"),
-                                });
-                                console.log(error)
-                            });
-
-
-
-                    } else {
-                        mdui_snackbar({
-                            message: "获取失败 请检查是否满员",
-                            action: "我知道了",
-                            onActionClick: () => console.log("click action button")
-                        });
-                        work_message = "null"
-                        return
+function initherodata() {
+    if (isJSON(localStorage.getItem("wzzdy_allheros"))) {
+        mydatajson.push(JSON.parse(localStorage.getItem("wzzdy_allheros")))
+        mdui_snackbar({
+            message: "加载英雄配置成功",
+            action: "我知道了",
+            onActionClick: () => console.log("click action button")
+        });
+    } else {
+        mdui.dialog({
+            headline: "提示",
+            description: "加载英雄配置失败 请点击更新配置",
+            confirmText: "更新",
+            cancelText: "取消",
+            actions: [
+                {
+                    text: "更新",
+                    onClick: () => {
+                        get_message = "null"
+                        allbutton[5].click()
+                        return false
                     }
                 }
-            }
+            ],
+        });
 
-            xhr.onerror = function () {
-                work_message = "null"
-                mdui.alert({
-                    headline: "提示",
-                    description: "出现错误 可能作者登录凭证掉了",
-                    confirmText: "我知道了",
-                    onConfirm: () => console.log("confirmed"),
+    }
+}
+
+initherodata()
+
+let get_message = "null"
+allbutton[5].onclick = function () {
+    if (get_message != "null") {
+        mdui_snackbar({
+            message: get_message,
+            action: "我知道了",
+            onActionClick: () => console.log("click action button")
+        });
+        return
+    }
+    mdui.confirm({
+        headline: "提示",
+        description: "是否更新英雄列表 点击继续请求 成功后会自动刷新网页 当之后英雄列表变化可以手动点击更新配置更新列表哦",
+        confirmText: "继续",
+        cancelText: "取消",
+        onConfirm: () => {
+            get_message = "请求获取英雄数据中 请耐心等待"
+            fetch('https://ouwhiy7vaifi44w6ee26vxikny0bzigt.lambda-url.ap-east-1.on.aws/getheros')
+                .then(response => response.text())
+                .then(data => {
+                    localStorage.setItem("wzzdy_allheros", data)
+                    location.reload()
+                })
+                .catch(error => {
+                    console.error('Error:', error)
+                    get_message = "null"
+                    mdui_snackbar({
+                        message: "更新失败 请重试",
+                        action: "我知道了",
+                        onActionClick: () => console.log("click action button")
+                    });
                 });
-                console.log(error)
-            }
-
-            xhr.send();
-
         },
         onCancel: () => console.log("canceled"),
     });
