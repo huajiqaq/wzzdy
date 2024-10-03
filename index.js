@@ -955,7 +955,7 @@ allbutton[3].onclick = function () {
     });
     var span = document.createElement('span');
     // 设置<span>元素的文本内容  
-    span.innerHTML = '<span slot="description"><h3>本网页已不维护 以下是二次分发本网页且维护的</span>';
+    span.innerHTML = '<span slot="description"><h3>本网页已不维护 以下是可能维护的网页</span>';
     mdui.dialog({
         headline: "更多链接",
         description: span,
