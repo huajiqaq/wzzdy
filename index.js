@@ -326,7 +326,7 @@ function 生成链接(func) {
             "mapType": "待填入roomid",
             "ullExternUid": "待填入roomid",
             "roomName": "1",
-            "platType": "1",
+            "platType": "4",
             "campid": "1",
             "AddPos": "0",
             "AddType": "2"
@@ -546,6 +546,9 @@ function GetModeStr(openurl) {
     mapnametable[5121] = ["觉醒之战", 10]
     mapnametable[5153] = ["多重施法", 10]
     mapnametable[5155] = ["双人同舞", 10]
+
+    mapnametable[99988] = ["众星峡谷", 20]
+
 
 
 
@@ -1463,7 +1466,7 @@ var heroButton = document.getElementsByClassName("herobutton")
 
 function 获取选择英雄名() {
     var editvalue = document.querySelectorAll(".myedit")[1].value
-    if (editvalue && JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
+    if (editvalue && editvalue in JSON.parse(localStorage.getItem("custom_heros"))) {
         var heros_json = JSON.parse(localStorage.getItem("custom_heros"))
         if (heros_json[editvalue].includes("suiji")) {
             return heros_json[editvalue]
@@ -1747,7 +1750,7 @@ heroButton[3].onclick = function () {
 heroButton[4].onclick = function () {
     if (localStorage.getItem("custom_heros")) {
         var editvalue = document.querySelectorAll(".myedit")[1].value
-        if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
+        if (editvalue in JSON.parse(localStorage.getItem("custom_heros"))) {
             mdui.confirm({
                 headline: "提示",
                 description: "是否删除该配置",
@@ -1793,7 +1796,7 @@ heroButton[4].onclick = function () {
 heroButton[5].onclick = function () {
     if (localStorage.getItem("custom_heros")) {
         var editvalue = document.querySelectorAll(".myedit")[1].value
-        if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
+        if (editvalue in JSON.parse(localStorage.getItem("custom_heros"))) {
 
             var heros_json = JSON.parse(localStorage.getItem("custom_heros"))
 
@@ -1868,7 +1871,7 @@ heroButton[7].onclick = function () {
 heroButton[8].onclick = function () {
     if (localStorage.getItem("custom_heros")) {
         var editvalue = document.querySelectorAll(".myedit")[1].value
-        if (JSON.parse(localStorage.getItem("custom_heros"))[editvalue]) {
+        if (editvalue in JSON.parse(localStorage.getItem("custom_heros"))) {
 
             var heros_json = JSON.parse(localStorage.getItem("custom_heros"))
             if (heros_json[editvalue].includes("suiji")) {
@@ -3415,7 +3418,7 @@ customButton[3].onclick = function () {
 customButton[4].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
+        if (editvalue in JSON.parse(localStorage.getItem("custom_cof"))) {
             mdui.confirm({
                 headline: "提示",
                 description: "是否删除该配置",
@@ -3457,7 +3460,7 @@ customButton[4].onclick = function () {
 customButton[5].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
+        if (editvalue in JSON.parse(localStorage.getItem("custom_cof"))) {
             mdui.prompt({
                 headline: "提示",
                 description: tip4,
@@ -3506,7 +3509,7 @@ customButton[5].onclick = function () {
 customButton[6].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
+        if (editvalue in JSON.parse(localStorage.getItem("custom_cof"))) {
             document.getElementsByClassName("suijitest")[0].open = true
         } else {
             mdui_snackbar({
@@ -3527,7 +3530,7 @@ customButton[6].onclick = function () {
 customButton[7].onclick = function () {
     if (localStorage.getItem("custom_cof")) {
         var editvalue = document.querySelectorAll(".myedit")[2].value
-        if (JSON.parse(localStorage.getItem("custom_cof"))[editvalue]) {
+        if (editvalue in JSON.parse(localStorage.getItem("custom_cof"))) {
             mdui.confirm({
                 headline: "提示",
                 description: "是否保存该配置",
